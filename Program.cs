@@ -2,9 +2,9 @@
 
 namespace Covid
 {
-    class Program
+    class CovidProgram
     {
-        static int[] cases = new int[] { 0, 4, 15, 30, 45, 60, 82, 110, 150, 193 };
+        static int[] cases = new int[] { 1, 4, 15, 30, 45, 60, 82, 110, 150, 193 };
 
         static void Main(string[] args)
         {
@@ -15,20 +15,43 @@ namespace Covid
                 switch (operation)
                 {
                     case 1:
-                        Console.WriteLine("Máme záznam z " + cases.Length + " dnů");
                         Console.WriteLine();
                         for (int i = 0; i < cases.Length; i = i + 1)
                         {
-                            Console.WriteLine("Den " + i + " přibylo " + cases[i] + " případů");
+                            Console.WriteLine("Den " + (i + 1) + " přibylo " + cases[i] + " případů");
+                        }
+                        Console.WriteLine();
+                        Console.WriteLine("Máme záznam z " + cases.Length + " dnů");
+                        if (cases.Length > 0)
+                        {  
+                            Console.WriteLine("Průměr je " + casesPerDayAverage());
+                            Console.WriteLine("Počet nakažených na 100 tisíc obyvatel je " + casesPer100K());
+                            Console.WriteLine((minDay(out int minimum) + 1) + ".den bylo nalezeno minimum: " + minimum);
+                            // Ukol
+                            // 1) Napsat funkci int maxDay()
                         }
                         break;
                     case 2:
+                        //zeptám se na den který chce upravit
+                        Console.Write("Který den chcete upravit? ");
+                        //uložím zadné číslo do promenné typu int
+                        int day = readInteger();
+                        //zeptam se na pocet pripadů které chce do upravovaneho dne zapsat
+                        Console.Write("Zadejte počet případů. ");
+                        //ulozim do dne novy pocet
+                        int dayCases = readInteger();
+                        cases[day - 1] = dayCases;
+                        //potvrdim ze operace probehla
+                        Console.WriteLine("Den " + day + " byl upraven.");
                         break;
                     case 3:
                         Array.Resize(ref cases, cases.Length + 1);
                         cases[cases.Length - 1] = readInteger();
+                        Console.WriteLine("Byl přidán záznam.");
                         break;
                     case 4:
+                        Array.Resize(ref cases, 0);
+                        Console.WriteLine("Záznamy byly smazány.");
                         break;
                     case 5:
                         break;
@@ -78,13 +101,44 @@ namespace Covid
         static int readInteger()
         {
             int result;
-            Console.WriteLine("Zadej číslo: ");
+            Console.WriteLine("Zadejte celé číslo: ");
             while (!tryReadInteger(out result)) 
              {
-                Console.WriteLine("Chybné zadání, napište platné číslo operace: ");
+                Console.WriteLine("Chybné zadání, napište platné celé číslo: ");
              }
             return result;
-            
+        }
+        static double casesPerDayAverage()
+        {
+            double soucet = 0;
+            for (int i = 0; i < cases.Length; i = i + 1)
+            {
+                soucet = soucet + cases[i];
+            }
+            return soucet/cases.Length;
+        }
+        static double casesPer100K()
+        {
+           double soucet = 0;
+           for (int i = 0; i < cases.Length; i = i + 1)
+            {
+                soucet = soucet + cases[i];
+            }
+            return soucet * 100000 / 10000000;
+        }
+        static int minDay(out int minimum)
+        {
+            int day = -1;
+            minimum = int.MaxValue;
+            for (int j=0; j < cases.Length; j++)
+            {
+                if (cases[j] < minimum)
+                {
+                   minimum = cases[j];
+                   day = j;
+                }
+            }
+            return day;
         }
     }
 }
